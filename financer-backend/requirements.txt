@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pyrebase
+firebase-admin
+requests
+pandas
+python-dotenv
+google-generativeai
