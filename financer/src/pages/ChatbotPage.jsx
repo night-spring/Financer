@@ -76,7 +76,7 @@ const ChatbotPage = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-4 bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700 overflow-hidden"
+          className="mt-8 bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700 overflow-hidden"
         >
           <div className="mt-8 h-[450px] overflow-y-auto p-4 space-y-4">
             {messages.map((msg, index) => (

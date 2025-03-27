@@ -93,7 +93,7 @@ const ComparisonsPage = () => {
         animate={{ y: 0, opacity: 1 }}
         className="w-full bg-gray-800/50 backdrop-blur-md py-8 text-center shadow-xl border-b border-gray-700"
       >
-        <h1 className="mt-8 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+        <h1 className="mt-16 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
           Stock Comparison
         </h1>
         <p className="mt-2 text-lg text-gray-300">Analyze and compare stock performance</p>

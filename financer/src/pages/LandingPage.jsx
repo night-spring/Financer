@@ -59,10 +59,11 @@ const LandingPage = () => {
             
             <motion.h1 
               variants={fadeUp}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-green-300 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-green-300 to-blue-400 bg-clip-text text-transparent min-h-[210px] leading-tight"
             >
               Smart Wealth Management
             </motion.h1>
+
             
             <motion.p
               variants={fadeUp}
