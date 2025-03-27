@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables and keys
+.env
+serviceAccountKey.json
+
+# Vercel and dependencies
+.venv/
+.vscode/
+.vercel/
