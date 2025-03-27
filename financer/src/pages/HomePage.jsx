@@ -22,7 +22,7 @@ const HomePage = () => {
       title: "Financial Insights",
       icon: "🔍",
       description: "Get personalized financial recommendations",
-      action: () => navigate("/insights")
+      action: () => navigate("/advisor")
     }
   ];
   const addImageFallback = (e) => {
