@@ -25,6 +25,9 @@ const HomePage = () => {
       action: () => navigate("/insights")
     }
   ];
+  const addImageFallback = (e) => {
+    e.target.src = '/logo-placeholder.png'; // Create a simple SVG as fallback
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-emerald-900">
@@ -32,13 +35,35 @@ const HomePage = () => {
       <motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="w-full bg-gray-800/50 backdrop-blur-md py-8 text-center shadow-xl border-b border-gray-700"
+        className="mt-8 w-full bg-gray-800/50 backdrop-blur-md py-16 text-center shadow-xl border-b border-gray-700"
       >
-        <h1 className="mt-16 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          Financer
-        </h1>
-        <p className="mt-2 text-lg text-gray-300">Your Comprehensive Financial Management Suite</p>
+        <div className="flex flex-col items-center justify-center">
+          {/* Logo with Gradient Border */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="mb-4 p-1 rounded-full bg-gradient-to-r from-green-400 to-blue-500"
+          >
+            <div className="bg-gray-800 p-2 rounded-full">
+              <img
+                src="/financer.png"
+                alt="Financer Logo"
+                className="h-16 w-16 object-contain"
+              />
+            </div>
+          </motion.div>
+
+          {/* Text Content */}
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+            Financer
+          </h1>
+          <p className="mt-2 text-lg text-gray-300">
+            Your Comprehensive Financial Management Suite
+          </p>
+        </div>
       </motion.header>
+
 
       {/* Hero Section */}
       <div className="container mx-auto max-w-6xl px-4 mt-16">
@@ -148,11 +173,28 @@ const HomePage = () => {
 
       {/* Footer */}
       <footer className="mt-16 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
-        <div className="container mx-auto text-center text-gray-400">
-          <p>“Financial freedom is available to those who learn about it and work for it.”</p>
-          <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
+  <div className="container mx-auto text-center text-gray-400">
+    {/* Logo with Gradient Border */}
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      whileInView={{ scale: 1, opacity: 1 }}
+      className="flex justify-center mb-4"
+    >
+      <div className="relative z-20 p-1 rounded-full bg-gradient-to-r from-green-400 to-blue-500">
+        <div className="bg-gray-800 p-1 rounded-full">
+          <img 
+            src="/financer.png" 
+            alt="Footer Logo" 
+            className="h-12 w-12 object-contain" 
+          />
         </div>
-      </footer>
+      </div>
+    </motion.div>
+
+    <p>“Financial freedom is available to those who learn about it and work for it.”</p>
+    <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
+  </div>
+</footer>
     </div>
   );
 };
