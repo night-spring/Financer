@@ -60,7 +60,7 @@ const App = () => {
       )}
 
       {/* Page Content */}
-      <div className="p-4">
+      <div className="">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/home" element={<HomePage />} />
