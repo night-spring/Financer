@@ -16,7 +16,7 @@ const LandingPage = () => {
   };
 
   const handleNavigation = () => {
-    navigate('/home');
+    navigate('/auth'); // Updated to navigate to auth page
   };
 
   return (
@@ -87,7 +87,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="bg-white/5 py-8 mt-20 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto text-center text-gray-400">
-          <p>&copy; 2025 Financial Nexus. All rights reserved.</p>
+        <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -35,7 +35,7 @@ const HomePage = () => {
         className="w-full bg-gray-800/50 backdrop-blur-md py-8 text-center shadow-xl border-b border-gray-700"
       >
         <h1 className="mt-8 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          Financial Nexus
+          Financer
         </h1>
         <p className="mt-2 text-lg text-gray-300">Your Comprehensive Financial Management Suite</p>
       </motion.header>
@@ -150,7 +150,7 @@ const HomePage = () => {
       <footer className="mt-16 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
         <div className="container mx-auto text-center text-gray-400">
           <p>“Financial freedom is available to those who learn about it and work for it.”</p>
-          <p className="mt-4">&copy; 2025 Financial Nexus. All rights reserved.</p>
+          <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
         </div>
       </footer>
     </div>

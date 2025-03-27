@@ -273,8 +273,7 @@ const ComparisonsPage = () => {
       {/* Footer */}
       <footer className="mt-12 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
         <div className="container mx-auto text-center text-gray-400">
-          <p>&copy; 2025 Financial Nexus. All rights reserved.</p>
-        </div>
+        <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>        </div>
       </footer>
     </div>
   );
