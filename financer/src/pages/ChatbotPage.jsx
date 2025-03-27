@@ -72,13 +72,13 @@ const ChatbotPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-emerald-900">
-      <div className="container mx-auto max-w-3xl p-4 mt-8">
+      <div className="mt-8 container mx-auto max-w-3xl p-4 mt-8">
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700 overflow-hidden"
+          className="mt-4 bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700 overflow-hidden"
         >
-          <div className="h-[500px] overflow-y-auto p-4 space-y-4">
+          <div className="mt-8 h-[450px] overflow-y-auto p-4 space-y-4">
             {messages.map((msg, index) => (
               <motion.div
                 key={index}

@@ -7,9 +7,9 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const FinancialsPage = () => {
   const [financials, setFinancials] = useState([
-    { id: 1, type: "Savings", balance: 500000, allocation: 23.8, color: "#4ADE80" },
-    { id: 2, type: "Investments", balance: 1200000, allocation: 57.1, color: "#60A5FA" },
-    { id: 3, type: "Fixed Deposits", balance: 450000, allocation: 21.4, color: "#C084FC" },
+    { id: 1, type: "Fixed Deposits", balance: 500000, allocation: 25, color: "#4ADE80" },
+    { id: 2, type: "Stocks", balance: 1200000, allocation: 60, color: "#60A5FA" },
+    { id: 3, type: "Mutual Funds", balance: 300000, allocation: 15, color: "#C084FC" },
   ]);
 
   const totalBalance = financials.reduce((acc, item) => acc + item.balance, 0);
@@ -33,9 +33,9 @@ const FinancialsPage = () => {
         className="w-full bg-gray-800/50 backdrop-blur-md py-8 text-center shadow-xl border-b border-gray-700"
       >
         <h1 className="mt-8 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          Portfolio Overview
+          Investment Portfolio
         </h1>
-        <p className="mt-2 text-lg text-gray-300">Comprehensive view of your financial assets</p>
+        <p className="mt-2 text-lg text-gray-300">Holistic view of your financial investments</p>
       </motion.header>
 
       <div className="container mx-auto max-w-6xl p-4 mt-8 space-y-8">
@@ -53,16 +53,16 @@ const FinancialsPage = () => {
           </div>
           
           <div className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700">
-            <h3 className="text-gray-400 text-sm">Asset Classes</h3>
+            <h3 className="text-gray-400 text-sm">Investment Vehicles</h3>
             <p className="text-3xl font-bold text-blue-400 mt-2">
               {financials.length}
             </p>
           </div>
           
           <div className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700">
-            <h3 className="text-gray-400 text-sm">Best Performing</h3>
+            <h3 className="text-gray-400 text-sm">Top Performer</h3>
             <p className="text-2xl font-bold text-purple-400 mt-2">
-              Investments ↗
+              Stocks ↗
             </p>
           </div>
         </motion.div>
@@ -75,7 +75,7 @@ const FinancialsPage = () => {
             animate={{ scale: 1 }}
             className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700"
           >
-            <h3 className="text-xl font-semibold text-gray-200 mb-4">Asset Allocation</h3>
+            <h3 className="text-xl font-semibold text-gray-200 mb-4">Investment Distribution</h3>
             <div className="h-64">
               <Pie 
                 data={chartData}
@@ -95,16 +95,16 @@ const FinancialsPage = () => {
             </div>
           </motion.div>
 
-          {/* Asset List */}
+          {/* Investment List */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700"
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-200">Asset Details</h3>
+              <h3 className="text-xl font-semibold text-gray-200">Investment Breakdown</h3>
               <button className="bg-green-400/10 text-green-400 px-4 py-2 rounded-lg hover:bg-green-400/20 transition">
-                + Add New
+                + New Investment
               </button>
             </div>
 
@@ -120,7 +120,8 @@ const FinancialsPage = () => {
                       className="h-10 w-10 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: item.color }}
                     >
-                      {item.type === 'Savings' ? '💰' : item.type === 'Investments' ? '📈' : '🏦'}
+                      {item.type === 'Fixed Deposits' ? '🏦' : 
+                       item.type === 'Stocks' ? '📈' : '📊'}
                     </div>
                     <div>
                       <h4 className="font-medium text-gray-200">{item.type}</h4>
@@ -140,12 +141,35 @@ const FinancialsPage = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Performance Section */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700"
+        >
+          <h3 className="text-xl font-semibold text-gray-200 mb-4">Annual Performance</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-gray-700/30 rounded-lg">
+              <p className="text-gray-400">Fixed Deposits Yield</p>
+              <p className="text-2xl text-green-400">7.5%</p>
+            </div>
+            <div className="p-4 bg-gray-700/30 rounded-lg">
+              <p className="text-gray-400">Stocks Growth</p>
+              <p className="text-2xl text-blue-400">24.8%</p>
+            </div>
+            <div className="p-4 bg-gray-700/30 rounded-lg">
+              <p className="text-gray-400">MF Returns</p>
+              <p className="text-2xl text-purple-400">15.2%</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* Footer */}
       <footer className="mt-12 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
         <div className="container mx-auto text-center text-gray-400">
-        <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
+          <p className="mt-4">&copy; 2025 WealthManager. All rights reserved.</p>
         </div>
       </footer>
     </div>
