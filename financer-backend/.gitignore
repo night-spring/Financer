@@ -4,9 +4,9 @@ __pycache__/
 *.pyd
 
 # Environment variables and keys
-.env
+*.env
 
 # Vercel and dependencies
-.venv/
-.vscode/
-.vercel/
+*.venv/
+*.vscode/
+*.vercel/
