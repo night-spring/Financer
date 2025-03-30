@@ -1,66 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const FDPage = () => {
-  const [fds, setFds] = useState([
-    { 
-      id: 1, 
-      bank: "Bank A", 
-      amount: 100000, 
-      rate: 5.5, 
-      tenure: 12, 
-      startDate: "2024-01-01",
-      interest: (100000 * 5.5 * 12) / 1200 // Added interest calculation for initial data
-    },
-    { 
-      id: 2, 
-      bank: "Bank B", 
-      amount: 200000, 
-      rate: 6.0, 
-      tenure: 24, 
-      startDate: "2024-02-15",
-      interest: (200000 * 6.0 * 24) / 1200
-    },
-    { 
-      id: 3, 
-      bank: "Bank C", 
-      amount: 150000, 
-      rate: 5.8, 
-      tenure: 18, 
-      startDate: "2024-03-10",
-      interest: (150000 * 5.8 * 18) / 1200
-    },
-  ]);
+const predefinedBanks = {
+  'SBI': '🏦',
+  'HDFC': '🏛️',
+  'ICICI': '🏢',
+  'Axis Bank': '🏤',
+  'Kotak Mahindra': '🏨',
+  'PNB': '🏣'
+};
 
-  const [newFd, setNewFd] = useState({ bank: "", amount: "", rate: "", tenure: "", startDate: "" });
+const FDPage = () => {
+  const [fds, setFds] = useState(() => {
+    const token = localStorage.getItem('firebaseToken');
+    if (!token) return [];
+    const savedFDs = localStorage.getItem('fds');
+    return savedFDs ? JSON.parse(savedFDs) : [];
+  });
+
+  const [newFd, setNewFd] = useState({ 
+    bank: "", 
+    amount: "", 
+    rate: "", 
+    tenure: "", 
+    startDate: "" 
+  });
+  const [sortBy, setSortBy] = useState("date");
+  const [selectedBank, setSelectedBank] = useState("All");
+
+  useEffect(() => {
+    const token = localStorage.getItem('firebaseToken');
+    if (token) {
+      localStorage.setItem('fds', JSON.stringify(fds));
+    }
+  }, [fds]);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem('firebaseToken');
+      if (!token) {
+        localStorage.removeItem('fds');
+        setFds([]);
+      }
+    };
+
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   const handleAddFD = () => {
     if (!Object.values(newFd).every(Boolean)) return;
+    
     const fdToAdd = { 
-      ...newFd, 
-      id: fds.length + 1, 
+      ...newFd,
+      id: Date.now(), 
       amount: parseFloat(newFd.amount), 
       rate: parseFloat(newFd.rate), 
       tenure: parseInt(newFd.tenure),
       interest: (parseFloat(newFd.amount) * parseFloat(newFd.rate) * parseInt(newFd.tenure)) / 1200
-
     };
-    setFds([...fds, fdToAdd]);
+    
+    setFds(prev => [...prev, fdToAdd]);
     setNewFd({ bank: "", amount: "", rate: "", tenure: "", startDate: "" });
   };
 
-  const totalInvestment = fds.reduce((acc, fd) => acc + fd.amount, 0);
-  const totalInterest = fds.reduce((acc, fd) => acc + fd.interest, 0);
+  const handleDeleteFD = (id) => {
+    setFds(prev => prev.filter(fd => fd.id !== id));
+  };
+
+  const sortedFds = [...fds].sort((a, b) => {
+    if (sortBy === "amount") return b.amount - a.amount;
+    if (sortBy === "rate") return b.rate - a.rate;
+    return new Date(b.startDate) - new Date(a.startDate);
+  });
+
+  const filteredFds = sortedFds.filter(fd => 
+    selectedBank === "All" || fd.bank === selectedBank
+  );
+
+  const totalInvestment = filteredFds.reduce((acc, fd) => acc + fd.amount, 0);
+  const totalInterest = filteredFds.reduce((acc, fd) => acc + fd.interest, 0);
+  const banks = [...new Set([...Object.keys(predefinedBanks), ...fds.map(fd => fd.bank)])].sort();
 
   const chartData = {
-    labels: fds.map(fd => fd.bank),
+    labels: filteredFds.map(fd => fd.bank),
     datasets: [{
       label: 'FD Amount',
-      data: fds.map(fd => fd.amount),
+      data: filteredFds.map(fd => fd.amount),
       backgroundColor: '#4ADE80',
       borderColor: '#059669',
       borderWidth: 1
@@ -73,9 +103,12 @@ const FDPage = () => {
     return date.toLocaleDateString();
   };
 
+  const getBankIcon = (bank) => {
+    return predefinedBanks[bank] || '🏦';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-emerald-900">
-      {/* Header */}
       <motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -88,7 +121,6 @@ const FDPage = () => {
       </motion.header>
 
       <div className="container mx-auto max-w-6xl p-4 mt-8 space-y-8">
-        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <motion.div 
             whileHover={{ scale: 1.05 }}
@@ -114,16 +146,14 @@ const FDPage = () => {
             whileHover={{ scale: 1.05 }}
             className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700"
           >
-            <h3 className="text-gray-400 text-sm">Average Rate</h3>
-            <p className="text-3xl font-bold text-purple-400 mt-2">
-            {((fds.reduce((acc, fd) => acc + fd.rate, 0) / fds.length).toFixed(1))}
+            <h3 className="text-gray-400 text-sm">Top Bank</h3>
+            <p className="text-2xl font-bold text-purple-400 mt-2">
+              {banks[0] || '-'}
             </p>
           </motion.div>
         </div>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* FD Form */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -131,13 +161,28 @@ const FDPage = () => {
           >
             <h2 className="text-xl font-semibold text-gray-200 mb-6">Add New FD</h2>
             <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Bank Name"
-                value={newFd.bank}
-                onChange={(e) => setNewFd({ ...newFd, bank: e.target.value })}
-                className="w-full p-3 bg-gray-700/30 border border-gray-600 rounded-lg focus:outline-none focus:border-green-400 text-gray-300 placeholder-gray-500"
-              />
+              <div className="relative">
+                <select
+                  value={newFd.bank}
+                  onChange={(e) => setNewFd({ ...newFd, bank: e.target.value })}
+                  className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-gray-300
+                            focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400
+                            appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOWNhM2FmIj48cGF0aCBkPSJNNyAxMGw1IDUgNS01eiIvPjwvc3ZnPg==')] 
+                            bg-no-repeat bg-[length:20px_20px] bg-[center_right_1rem]"
+                >
+                  <option value="" className="bg-gray-800 text-gray-300">Select Bank</option>
+                  {banks.map(bank => (
+                    <option 
+                      key={bank} 
+                      value={bank} 
+                      className="bg-gray-800 text-gray-300 flex items-center"
+                    >
+                      <span className="mr-2">{getBankIcon(bank)}</span>
+                      {bank}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <input
                 type="number"
                 placeholder="Amount"
@@ -176,13 +221,27 @@ const FDPage = () => {
             </div>
           </motion.div>
 
-          {/* FD Chart */}
           <motion.div 
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             className="bg-gray-800/50 backdrop-blur-lg p-6 rounded-2xl border border-gray-700"
           >
-            <h3 className="text-xl font-semibold text-gray-200 mb-4">FD Distribution</h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-200">FD Distribution</h3>
+              <select
+                value={selectedBank}
+                onChange={(e) => setSelectedBank(e.target.value)}
+                className="p-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-300
+                          focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400
+                          appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOWNhM2FmIj48cGF0aCBkPSJNNyAxMGw1IDUgNS01eiIvPjwvc3ZnPg==')] 
+                          bg-no-repeat bg-[length:20px_20px] bg-[center_right_1rem]"
+              >
+                <option value="All">All Banks</option>
+                {banks.map(bank => (
+                  <option key={bank} value={bank}>{bank}</option>
+                ))}
+              </select>
+            </div>
             <div className="h-64">
               <Bar 
                 data={chartData}
@@ -192,7 +251,11 @@ const FDPage = () => {
                     legend: { display: false },
                     tooltip: { 
                       callbacks: {
-                        label: (context) => `₹${context.raw.toLocaleString()}`
+                        label: (context) => `₹${context.raw.toLocaleString()}`,
+                        footer: (items) => {
+                          const fd = filteredFds[items[0].dataIndex];
+                          return `Interest: ₹${fd.interest.toLocaleString()}\nRate: ${fd.rate}%`;
+                        }
                       }
                     }
                   },
@@ -211,7 +274,6 @@ const FDPage = () => {
           </motion.div>
         </div>
 
-        {/* FD List */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -219,29 +281,46 @@ const FDPage = () => {
         >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-200">Your Fixed Deposits</h2>
-            <div className="flex gap-2">
-              <button className="bg-green-400/10 text-green-400 px-4 py-2 rounded-lg hover:bg-green-400/20 transition">
-                Sort by Date
-              </button>
-              <button className="bg-blue-400/10 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-400/20 transition">
-                Sort by Amount
-              </button>
-            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="p-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-300
+                        focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400
+                        appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOWNhM2FmIj48cGF0aCBkPSJNNyAxMGw1IDUgNS01eiIvPjwvc3ZnPg==')] 
+                        bg-no-repeat bg-[length:20px_20px] bg-[center_right_1rem]"
+            >
+              <option value="date">Sort by Date</option>
+              <option value="amount">Sort by Amount</option>
+              <option value="rate">Sort by Rate</option>
+            </select>
           </div>
 
           <div className="space-y-4">
-            {fds.map((fd) => (
+            {filteredFds.map((fd) => (
               <motion.div
                 key={fd.id}
                 whileHover={{ scale: 1.02 }}
-                className="p-4 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition cursor-pointer"
+                className="p-4 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition cursor-pointer relative group"
               >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-200">{fd.bank}</h3>
-                    <p className="text-sm text-gray-400">
-                      {calculateMaturityDate(fd.startDate, fd.tenure)} • {fd.tenure} months
-                    </p>
+                <button
+                  onClick={() => handleDeleteFD(fd.id)}
+                  className="absolute top-2 right-2 p-1.5 text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-2xl">
+                      {getBankIcon(fd.bank)}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-200">{fd.bank}</h3>
+                      <p className="text-sm text-gray-400">
+                        {calculateMaturityDate(fd.startDate, fd.tenure)} • {fd.tenure} months
+                      </p>
+                    </div>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-medium text-green-400">
@@ -263,7 +342,6 @@ const FDPage = () => {
           </div>
         </motion.div>
       </div>
-
       {/* Footer */}
      <footer className="mt-16 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
        <div className="container mx-auto text-center text-gray-400">
