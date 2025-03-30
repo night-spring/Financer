@@ -26,3 +26,6 @@ class LoginSchema(BaseModel):
             }
         }
 
+
+class ChatRequest(BaseModel):
+    message: str

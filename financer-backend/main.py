@@ -1,10 +1,9 @@
-import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 from fastapi.requests import Request
 import pyrebase
-from models import SignUpSchema, LoginSchema
+from models import SignUpSchema, LoginSchema, ChatRequest
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -15,7 +14,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust this to restrict access
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,22 +23,28 @@ app.add_middleware(
 
 import firebase_admin
 from firebase_admin import credentials, auth
+from dotenv import load_dotenv
+import os
+import json
 
-if not firebase_admin._apps:
-    cred = credentials.Certificate("serviceAccountKey.json")
+load_dotenv()
+service_account_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
+
+if service_account_json and not firebase_admin._apps:
+    cred = credentials.Certificate(json.loads(service_account_json))
     firebase_admin.initialize_app(cred)
 
-firebaseConfig = {
-  "apiKey": "AIzaSyCHbEP4wFiVb0jFnolhg6AwWzzM6OyeTMY",
-  "authDomain": "financer-fastapi-auth.firebaseapp.com",
-  "projectId": "financer-fastapi-auth",
-  "storageBucket": "financer-fastapi-auth.firebasestorage.app",
-  "messagingSenderId": "996601250965",
-  "appId": "1:996601250965:web:59b564590b4a3f32a3c79c",
-  "measurementId": "G-338VMGKVYC",
-  "databaseURL": ""
-}
 
+firebaseConfig = {
+    "apiKey": os.getenv("FIREBASE_API_KEY"),
+    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
+    "projectId": os.getenv("FIREBASE_PROJECT_ID"),
+    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
+    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
+    "appId": os.getenv("FIREBASE_APP_ID"),
+    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID"),
+    "databaseURL": ""
+}
 firebase = pyrebase.initialize_app(firebaseConfig)
 
 
@@ -86,14 +91,15 @@ from pathlib import Path
 
 
 last_data = []
-@app.post("/stocks")
+@app.get("/stocks")
 async def run_script():
-    script_path = Path("nse_data.py")  # Ensure this file exists
+    global last_data
+    script_path = Path("nse_data.py")
 
     try:
         result = subprocess.run(["python", str(script_path)], capture_output=True, text=True, check=True)
         data = json.loads(result.stdout.strip())
-        last_data = [data]
+        last_data = data["data"]
         return {"data": last_data}
     except subprocess.CalledProcessError as e:
         return {"data": last_data}
@@ -102,24 +108,22 @@ async def run_script():
 
 import os
 import google.generativeai as genai
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 from dotenv import load_dotenv
 
-# Load API Key
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
 
-class ChatRequest(BaseModel):
-    message: str
-
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")  # Use a valid model
-        response = model.generate_content(request.message)
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        prompt = "You are an AI finance assistant, skilled in providing comprehensive support for all finance-related queries. Your expertise spans personal finance, investment strategies, tax planning, budgeting, financial markets, corporate finance, and financial analysis. You are patient, precise, and capable of explaining complex financial concepts in a simple and practical manner. Tailor your responses to the user's level of financial knowledge and always provide actionable insights."
+        additional = ("Addition information - total portfolio value is ₹2,000,000, where fixed deposits is ₹500,000, "
+                      "stocks ₹1,200,000, mutual funds ₹300,000, Fixed deposit yield 7.5%, Stocks Growth 24.8%, "
+                      "MF returns 15.2%. Use this information if required.")
+        response = model.generate_content(prompt + additional + request.message)
         return {"response": response.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
