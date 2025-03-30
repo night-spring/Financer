@@ -76,7 +76,7 @@ const ChatbotPage = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-4 bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700 overflow-hidden"
+          className="mt-8 bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700 overflow-hidden"
         >
           <div className="mt-8 h-[450px] overflow-y-auto p-4 space-y-4">
             {messages.map((msg, index) => (
@@ -139,8 +139,26 @@ const ChatbotPage = () => {
           </div>
         </motion.div>
       </div>
-      <footer className="mt-12 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
+      <footer className="mt-16 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
         <div className="container mx-auto text-center text-gray-400">
+          {/* Logo with Gradient Border */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            className="flex justify-center mb-4"
+          >
+            <div className="relative z-20 p-1 rounded-full bg-gradient-to-r from-green-400 to-blue-500">
+              <div className="bg-gray-800 p-1 rounded-full">
+                <img 
+                  src="/financer.png" 
+                  alt="Footer Logo" 
+                  className="h-12 w-12 object-contain" 
+                />
+              </div>
+            </div>
+          </motion.div>
+      
+          <p>“Financial freedom is available to those who learn about it and work for it.”</p>
           <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
         </div>
       </footer>

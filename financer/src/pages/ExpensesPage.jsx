@@ -67,7 +67,7 @@ const ExpensesPage = () => {
         animate={{ y: 0, opacity: 1 }}
         className="w-full bg-gray-800/50 backdrop-blur-md py-8 text-center shadow-xl border-b border-gray-700"
       >
-        <h1 className="mt-8 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+        <h1 className="mt-16 text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
           Expense Manager
         </h1>
         <p className="mt-2 text-lg text-gray-300">Track and analyze your spending patterns</p>
@@ -235,11 +235,29 @@ const ExpensesPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="mt-12 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
-        <div className="container mx-auto text-center text-gray-400">
+    <footer className="mt-16 bg-gray-900/50 backdrop-blur-md py-6 border-t border-gray-700/50">
+      <div className="container mx-auto text-center text-gray-400">
+        {/* Logo with Gradient Border */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          className="flex justify-center mb-4"
+        >
+          <div className="relative z-20 p-1 rounded-full bg-gradient-to-r from-green-400 to-blue-500">
+            <div className="bg-gray-800 p-1 rounded-full">
+              <img 
+                src="/financer.png" 
+                alt="Footer Logo" 
+                className="h-12 w-12 object-contain" 
+              />
+            </div>
+          </div>
+        </motion.div>
+    
+        <p>“Financial freedom is available to those who learn about it and work for it.”</p>
         <p className="mt-4">&copy; 2025 Financer. All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
+    </footer>
     </div>
   );
 };
