@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 pyrebase4
+setuptools
 firebase-admin
 requests
 python-dotenv
