@@ -54,13 +54,3 @@ def get_nse_data():
             "data": [],
             "error": f"Unexpected error: {str(e)}"
         }
-
-if __name__ == "__main__":
-    try:
-        result = get_nse_data()
-        print(json.dumps(result))
-    except Exception as e:
-        print(json.dumps({
-            "data": [],
-            "error": f"Script crashed: {str(e)}"
-        }))
