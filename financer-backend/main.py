@@ -104,32 +104,32 @@ async def run_script():
             check=True,
             timeout=30  # Add timeout
         )
-        
+
         output = result.stdout.strip()
-        
+
         if not output:
             raise ValueError("Empty script output")
-            
+
         script_data = json.loads(output)
-        
+
         if script_data.get("error"):
             print(f"Script Error: {script_data['error']}")
             return {"data": last_data, "error": script_data["error"]}
-            
+
         if script_data.get("data"):
             last_data = script_data["data"]
             return {"data": last_data}
-            
+
         raise ValueError("Unexpected script output")
-        
+
     except subprocess.CalledProcessError as e:
         print(f"Subprocess failed: {e.stderr}")
         return {"data": last_data, "error": "Data update failed"}
-        
+
     except json.JSONDecodeError as e:
         print(f"Invalid JSON: {e.doc}")
         return {"data": last_data, "error": "Data format error"}
-        
+
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
         return {"data": last_data, "error": "Temporary data issue"}
