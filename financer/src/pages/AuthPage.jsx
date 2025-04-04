@@ -18,7 +18,7 @@ const AuthPage = () => {
     }
   }, [navigate]);
 
-  const API_URL = 'http://localhost:8000';
+  const API_URL = 'https://financer-backend-zeta.vercel.app';
 
   const handleAuth = async (endpoint) => {
     setLoading(true);
