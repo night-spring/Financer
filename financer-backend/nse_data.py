@@ -43,3 +43,12 @@ def get_nse_data():
             "data": [],
             "error": f"Unexpected error: {str(e)}"
         }
+
+def get_data():
+    result = get_nse_data()
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "application/json"},
+        "data": result
+    }
+

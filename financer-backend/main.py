@@ -85,7 +85,7 @@ async def validate_token(request: Request):
 
 
 
-from nse_data import get_nse_data
+from nse_data import get_data
 
 last_data = []
 @app.get("/stocks")
@@ -93,8 +93,8 @@ async def run_script():
     global last_data
 
     try:
-        result = get_nse_data()
-        last_data = result["data"]
+        result = get_data()
+        last_data = result["data"]["data"]
         return {"data": last_data}
 
 

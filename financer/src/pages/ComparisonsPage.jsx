@@ -35,7 +35,7 @@ const ComparisonsPage = () => {
   useEffect(() => {
     const fetchStocks = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/stocks");
+        const response = await fetch("https://financer-backend-zeta.vercel.app/stocks");
         const text = await response.text();
         
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
